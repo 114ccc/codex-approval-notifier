@@ -4,7 +4,11 @@ macOS-only helper that shows a system notification when Codex opens a real comma
 
 For macOS only.
 
-中文说明见下方的 `中文说明`。
+中文快速入口：
+
+- [中文说明](#中文说明)
+- [中文安装](#中文安装)
+- [中文排错](#中文排错)
 
 ## Overview
 
@@ -173,6 +177,18 @@ This means the notification is triggered by a real approval event, not by pre-gu
 - 不支持 Windows
 - 不支持 Linux
 - 目前不是经过 notarize 的正式发行版
+- 不适合作为跨平台通用通知方案
+
+### 功能说明
+
+- 监听 `~/.codex/sessions` 中的真实审批事件
+- 识别 `sandbox_permissions=require_escalated` 这类真实审批请求
+- 将通知任务写入本地队列
+- 由 `/Applications/CodexApprovalNotifier.app` 读取队列并发送 macOS 系统通知
+
+通知文案：
+
+`有新的审批确认，请查看。`
 
 ### 工作原理
 
@@ -187,7 +203,7 @@ This means the notification is triggered by a real approval event, not by pre-gu
 - 只在真实审批出现后提醒
 - 不会因为普通命令大量误报
 
-### 安装
+## 中文安装
 
 在仓库根目录执行：
 
@@ -211,6 +227,21 @@ chmod +x install.sh
 2. 打开 `系统设置 -> 通知`
 3. 确认 `CodexApprovalNotifier` 已允许通知
 
+### 验证
+
+你可以手动触发一条测试通知：
+
+```bash
+python3 - <<'PY'
+import importlib.util
+spec = importlib.util.spec_from_file_location('watcher', '/Users/coder/.codex/scripts/codex_approval_watcher.py')
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+mod.send_notification('Codex Test', '这是测试通知')
+print('queued')
+PY
+```
+
 ### 卸载
 
 ```bash
@@ -223,10 +254,45 @@ chmod +x uninstall.sh
 - `~/.codex/approval-watcher.log`
 - `~/.codex/app-notifier.log`
 
+### 安装后写入的文件
+
+- `/Applications/CodexApprovalNotifier.app`
+- `~/.codex/scripts/codex_approval_watcher.py`
+- `~/.codex/scripts/codex_approval_notifier_main.swift`
+- `~/Library/LaunchAgents/com.coder.codex-approval-watcher.plist`
+- `~/Library/LaunchAgents/com.coder.codex-approval-notifier.plist`
+
+### 仓库结构
+
+- `scripts/codex_approval_watcher.py`
+  监听 Codex 审批事件并写入通知队列
+- `scripts/codex_approval_notifier_main.swift`
+  通知 app 的入口，负责消费队列并发送 macOS 通知
+- `install.sh`
+  安装脚本
+- `uninstall.sh`
+  卸载脚本
+- `app-template/Contents/Info.plist`
+  app 元数据模板
+- `launchagents/`
+  LaunchAgent 参考配置
+
+## 中文排错
+
+- 如果没有通知：
+  - 手动打开一次 `/Applications/CodexApprovalNotifier.app`
+  - 检查 `系统设置 -> 通知 -> CodexApprovalNotifier`
+  - 确认两个 LaunchAgent 处于运行状态
+- 如果没有捕获到审批：
+  - 查看 `~/.codex/approval-watcher.log`
+- 如果 app 已启动但通知异常：
+  - 查看 `~/.codex/app-notifier.log`
+
 ### 说明
 
 - 这是一个 for macOS 的工具，不支持其它系统
 - 默认通知文案为：`有新的审批确认，请查看。`
+- 目前是本地安装分发方案，不是 notarize 后的正式发行包
 
 ### 通知效果示例
 
