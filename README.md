@@ -36,6 +36,10 @@ Notification text:
 
 `有新的审批确认，请查看。`
 
+Example notification:
+
+![Codex approval notification](./assets/notification-screenshot.png)
+
 ## Requirements
 
 - macOS only
@@ -223,3 +227,7 @@ chmod +x uninstall.sh
 
 - 这是一个 for macOS 的工具，不支持其它系统
 - 默认通知文案为：`有新的审批确认，请查看。`
+
+### 通知效果示例
+
+![通知截图](./assets/notification-screenshot.png)
