@@ -29,6 +29,12 @@ This project is not intended for:
 - notarized enterprise deployment
 - general-purpose cross-platform notification workflows
 
+## Community
+
+Thanks to the [Linux.do](https://linux.do/) community for the attention, discussion, and practical feedback around projects like this one.
+
+That kind of early recognition and real-world usage feedback helps small utility tools get refined faster.
+
 ## What it does
 
 - Watches Codex session files under `~/.codex/sessions`
@@ -171,6 +177,12 @@ This means the notification is triggered by a real approval event, not by pre-gu
 - 仅支持 macOS
 - 适合本机本地安装使用
 - 依赖本机已安装并使用 Codex CLI
+
+### 社区反馈
+
+感谢 [Linux.do](https://linux.do/) 社区的关注、讨论和使用反馈。
+
+这类面向真实场景的小工具，能够更快被打磨出来，也离不开社区用户的认可、试用与建议。
 
 不适用范围：
 
